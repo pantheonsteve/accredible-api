@@ -1,0 +1,8 @@
+name: 'Accredible API Integration'
+type: module
+description: 'Integrates with the Accredible API to generate credentials.'
+core_version_requirement: ^9.4 || ^10
+package: Custom
+dependencies:
+version: '1.0'
+project: 'accredible_api'

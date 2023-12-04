@@ -1,0 +1,50 @@
+<?php
+
+use Drupal\taxonomy\Entity\Term;
+
+/**
+ * @file
+ * Install file for accredible_api.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function accredible_api_install() {
+
+  $vocab = 'certification_type';
+
+  $items = ['Pantheon WebOps Certification'];
+
+    foreach ($items as $item) {
+      $term = TERM::create(array(
+        'parent' => array(),
+        'name' => $item,
+        'vid' => $vocab,
+        'field_group' => '510137'
+      ))->save();
+    }
+  }
+  
+  /**
+   * Implements hook_uninstall().
+   */
+  function accredible_api_uninstall() {
+
+    // Delete Credential Content type
+    $credential = \Drupal\node\Entity\NodeType::load('credential');
+    // Check if the content type exists
+    if ($credential) {
+      // Delete the content type.
+      $credential->delete();
+    }
+
+    
+    // Delete Certification Type vocabluary
+    $certification_type = \Drupal\taxonomy\Entity\Vocabulary::load('certification_type');
+    // Check if the vocabulary exists.
+    if ($certification_type) {
+      // Delete the vocabulary.
+      $certification_type->delete();
+    }
+  }

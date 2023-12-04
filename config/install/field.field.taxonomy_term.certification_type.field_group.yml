@@ -1,0 +1,18 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.field_group
+    - taxonomy.vocabulary.certification_type
+id: taxonomy_term.certification_type.field_group
+field_name: field_group
+entity_type: taxonomy_term
+bundle: certification_type
+label: 'Group ID'
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

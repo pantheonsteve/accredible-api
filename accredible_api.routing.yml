@@ -1,0 +1,31 @@
+accredible_api.admin:
+  path: '/admin/config/services/accredible'
+  defaults:
+    _form: '\Drupal\accredible_api\Form\AccredibleAPISettingsForm'
+    _title: 'Accredible Settings'
+  requirements:
+    _permission: 'administer site configuration'
+
+accredible_api.credentials_page:
+  path: '/accredible/credentials'
+  defaults:
+    _controller: '\Drupal\accredible_api\Controller\AccredibleAPIController::fetch_accredible_credentials'
+    _title: 'Accredible Credentials'
+  requirements:
+    _permission: 'access content'
+
+accredible_api.credential_by_id:
+  path: '/credential/{credential_id}'
+  defaults:
+    _controller: '\Drupal\accredible_api\Controller\AccredibleAPIController::get_accredible_credential_by_id'
+    _title: 'Accredible Credential'
+  requirements:
+    _permission: 'access content'
+
+accredible_api.users_page:
+  path: '/users'
+  defaults:
+    _controller: '\Drupal\accredible_api\Controller\UsersPageController::credentialtable'
+    _title: 'Accredible Credentials'
+  requirements:
+    _permission: 'access content'

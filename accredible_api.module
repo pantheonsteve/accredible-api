@@ -1,0 +1,76 @@
+<?php
+
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\node\Entity\Node;
+use Drupal\node\NodeInterface;
+use Drupal\taxonomy\Entity\Term;
+use Drupal\accredible_api\Controller;
+
+/**
+ * Implements hook_ENTITY_TYPE_presave() for node entities
+ */
+
+function accredible_api_node_presave(NodeInterface $node) {
+    if ($node->getType() == 'credential') {
+        //Check to see if node is being created for the first time
+        if ($node->isNew()) {
+            // Get the necessary fields from the node to pass to the Accredible API
+            $type = $node->get('field_certification_type')->entity;
+            $cert_type = $type->label();
+            $group_id = $type->get('field_group')->value;
+            $user = $node->get('field_exam_taker')->entity;
+            $email = $user->getEmail();
+            $agency_reference = $user->get('field_agency')->entity;
+            $agency = $agency_reference ? $agency_reference->label() : '';
+            $first_name = $user->get('field_first_name')->value;
+            $last_name = $user->get('field_last_name')->value;
+            $name = $first_name . ' ' . $last_name;
+            $date_object = $node->get('field_date')->date;
+            $date = $date_object->format('Y-m-d');
+
+            // Call the callback function
+            $controller = \Drupal::classResolver()->getInstanceFromDefinition('Drupal\accredible_api\Controller\CredentialController');
+            $response = $controller->create_credential($email, $name, $agency, $date, $cert_type, $group_id);
+
+            // Assuming the response contains the Credential ID and URL
+            $node->set('field_credential_id', $response['credential_id']);
+            $node->set('field_credential_url', $response['credential_url']);
+        } else {
+            if ($node->hasField('field_credential_id') && !$node->get('field_credential_id')->isEmpty() && $node->hasField('field_credential_url') && $node->get('field_credential_url')->isEmpty()) {
+                $controller = \Drupal::classResolver()->getInstanceFromDefinition('Drupal\accredible_api\Controller\AccredibleAPIController');
+                $cid = $node->get('field_credential_id')->value;
+                $credential_url = $controller->get_accredible_credential_by_id($cid);
+            
+                // Extract only the URL from the response
+                $lines = explode("\n", $credential_url);
+                foreach ($lines as $line) {
+                    if (filter_var($line, FILTER_VALIDATE_URL)) {
+                        $node->set('field_credential_url', $line);
+                        break;
+                    }
+                }
+            }
+            
+        }
+    }
+}
+
+
+/**
+ * Implements hook_form_alter()
+ */
+
+ function accredible_api_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  
+    if ($form_id == 'node_credential_form') {
+      
+      // Hide the title field.
+      $form['title']['#type'] = 'hidden';
+      
+      // Set a default value for the title, because it's just a place to store data and the title doesn't matter.
+      $title = 'New Credential [' . time() . ']';
+      $form['title']['widget'][0]['value']['#default_value'] = $title;
+  
+    }
+   }
+  

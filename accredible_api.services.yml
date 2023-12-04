@@ -1,0 +1,4 @@
+services:
+  accredible_api.api_client:
+    class: Drupal\accredible_api\AccredibleClient
+    arguments: ['@config.factory']

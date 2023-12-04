@@ -1,0 +1,7 @@
+langcode: en
+status: true
+dependencies: {  }
+name: 'Certification Type'
+vid: certification_type
+description: 'Type of Certification Exam taken. Default is Pantheon WebOps Certification.'
+weight: 0

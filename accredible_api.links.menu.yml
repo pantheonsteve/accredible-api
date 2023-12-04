@@ -1,0 +1,6 @@
+accredible_api.admin:
+  title: 'Accredible API'
+  description: 'Configure the Accredible API settings.'
+  parent: system.admin_config_services
+  route_name: accredible_api.admin
+  weight: 100
